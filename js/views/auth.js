@@ -11,7 +11,7 @@ function frame(formHTML) {
   const n = S.visibleCourses().filter((c) => !c.soon).length;
   return `<div class="auth">
     <section class="auth-art" aria-hidden="false">
-      <video class="auth-video" autoplay muted loop playsinline preload="auto" poster="media/ink.jpg" src="media/ink.mp4"></video>
+      <video class="auth-video" autoplay muted loop playsinline preload="auto" poster="media/light.jpg" src="${matchMedia("(max-width: 860px)").matches ? "media/light.mp4" : "media/light_full.mp4"}"></video>
       <div class="auth-shade"></div>
       <div class="auth-art-in">
         <a class="brand" href="https://www.grupoamplifia.com" aria-label="Volver a grupoamplifia.com">${LOGO}<span class="brand-name">Amplifia</span><span class="brand-tag">Campus</span></a>
