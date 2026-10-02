@@ -8,7 +8,6 @@ import { toast, field, resetShell } from "../core/ui.js";
 import { DEMO_ACCOUNTS } from "../data/seed.js";
 
 function frame(formHTML) {
-  const n = S.visibleCourses().filter((c) => !c.soon).length;
   return `<div class="auth">
     <section class="auth-art" aria-hidden="false">
       <video class="auth-video" autoplay muted loop playsinline preload="auto" poster="media/light.jpg" src="${matchMedia("(max-width: 860px)").matches ? "media/light.mp4" : "media/light_full.mp4"}"></video>
@@ -21,8 +20,8 @@ function frame(formHTML) {
           <p>Cursos de procesos, liderazgo, equipos e inteligencia artificial con la metodología de Amplifia. A tu ritmo y desde cualquier dispositivo.</p>
         </div>
         <ul class="auth-facts">
-          <li><b>${n}</b><span>cursos</span></li>
-          <li><b>6</b><span>frentes de trabajo</span></li>
+          <li><b>${icon("layers")}</b><span>procesos, personas e IA</span></li>
+          <li><b>${icon("live")}</b><span>clases en vivo</span></li>
           <li><b>${icon("shield")}</b><span>certificados verificables</span></li>
         </ul>
       </div>
