@@ -147,7 +147,8 @@ export function mineView(_, query) {
   const tab = tabs[query.tab] ? query.tab : "curso";
   const row = ({ e, c, p }) => {
     const nl = S.nextLesson(e, c);
-    const href = p.status === "exam" ? `#/examen/${c.slug}` : p.status === "done" ? `#/curso/${c.slug}` : `#/aprender/${c.slug}/${nl.id}`;
+    /* Si todavía no empezó, primero ve la página del curso (descripción y programa); desde ahí entra con «Empezar» */
+    const href = p.status === "exam" ? `#/examen/${c.slug}` : p.status === "done" || p.done === 0 ? `#/curso/${c.slug}` : `#/aprender/${c.slug}/${nl.id}`;
     return `<article class="mrow">
       <a class="mrow-media" href="#/curso/${c.slug}">${cover(c)}</a>
       <div class="mrow-body">

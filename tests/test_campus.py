@@ -306,6 +306,29 @@ def inscripcion_y_leccion_completada_persiste(browser):
 
 
 @test
+def empezar_desde_mis_cursos_pasa_primero_por_la_pagina_del_curso(browser):
+    ctx, page = new_page(browser)
+    login(page, *ALUMNO)
+    goto(page, "/curso/experiencia-del-cliente")
+    page.click("[data-enroll]"); page.wait_for_timeout(600)
+    goto(page, "/mis-cursos")
+    row = page.locator(".mrow", has_text="Experiencia del cliente")
+    check("Empezar" in row.inner_text(), "el curso nuevo debería mostrar «Empezar»")
+    row.locator(".mrow-cta a").click(); page.wait_for_timeout(500)
+    check("#/curso/experiencia-del-cliente" in page.url, f"«Empezar» debería abrir la página del curso (url {page.url})")
+    check("Lo que vas a aprender" in page.content(), "debería verse la descripción del curso")
+    page.click(".course-side .buy-in > a.btn"); page.wait_for_timeout(500)
+    check("#/aprender/experiencia-del-cliente/" in page.url, "el botón Empezar de la página del curso debería abrir el programa")
+    # Un curso ya empezado sigue entrando directo a la lección donde quedó
+    goto(page, "/mis-cursos")
+    row = page.locator(".mrow", has_text="Liderazgo aumentado")
+    check("Continuar" in row.inner_text(), "un curso en marcha debería decir «Continuar»")
+    row.locator(".mrow-cta a").click(); page.wait_for_timeout(500)
+    check("#/aprender/liderazgo-aumentado/" in page.url, "«Continuar» debería abrir la lección donde quedó")
+    ctx.close()
+
+
+@test
 def video_se_completa_solo_al_verlo(browser):
     ctx, page = new_page(browser)
     login(page, *ALUMNO)
