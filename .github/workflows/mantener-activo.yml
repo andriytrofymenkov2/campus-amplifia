@@ -1,0 +1,36 @@
+# Mantiene activo el proyecto de Supabase del campus.
+# El plan gratis de Supabase PAUSA el proyecto si pasa una semana sin uso.
+# Esta tarea hace una consulta mínima cada 2 días, así nunca queda inactivo.
+# Si Supabase igual estuviera pausado o caído, la tarea falla y GitHub avisa por mail.
+name: Mantener activo Supabase
+
+on:
+  schedule:
+    - cron: "17 12 */2 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  consultar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Consultar Supabase
+        run: |
+          URL=$(grep -oE 'https://[a-z0-9]+\.supabase\.co' js/config.js | head -1)
+          KEY=$(grep -oE 'sb_publishable_[A-Za-z0-9_-]+' js/config.js | head -1)
+          if [ -z "$URL" ] || [ -z "$KEY" ]; then echo "No encontré la URL o la clave en js/config.js"; exit 1; fi
+          echo "Proyecto: $URL"
+          # Consulta a la base (cuenta como actividad aunque la respuesta sea 'sin permiso': llega a la base)
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$URL/rest/v1/courses?select=id&limit=1" -H "apikey: $KEY")
+          echo "Base de datos: HTTP $CODE"
+          # Servicio de ingreso
+          AUTH=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$URL/auth/v1/health" -H "apikey: $KEY")
+          echo "Ingreso (auth): HTTP $AUTH"
+          # 000 = no responde (proyecto pausado o sin conexión); 5xx = error del servidor
+          case "$CODE" in 000|5*) echo "Supabase no responde: puede estar pausado"; exit 1;; esac
+          case "$AUTH" in 000|5*) echo "El servicio de ingreso no responde"; exit 1;; esac
+          echo "Supabase activo"
